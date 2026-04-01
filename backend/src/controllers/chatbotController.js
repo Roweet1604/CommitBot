@@ -1,5 +1,5 @@
 const Chatbot = require('../models/chatbot');
-const Knowledge = require('../models/Knowledge');
+const Knowledge = require('../models/knowledge');
 
 const createChatbot = async (req, res) => {
   try {
