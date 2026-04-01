@@ -18,9 +18,9 @@ export default function EmbedCode() {
       .finally(() => setLoading(false))
   }, [])
 
-  const apiUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'
-  const embedCode = `<script src="${apiUrl}/widget/widget.js" data-bot-id="${id}" data-api-url="${apiUrl}"></script>`
-
+  // const apiUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'
+  const backendUrl = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace('/api', '')
+  const embedCode = `<script src="${backendUrl}/widget/widget.js" data-bot-id="${id}" data-api-url="${backendUrl}"></script>`
   const copyCode = () => {
     navigator.clipboard.writeText(embedCode)
     setCopied(true)
