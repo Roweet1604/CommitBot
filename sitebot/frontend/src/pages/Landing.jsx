@@ -81,7 +81,7 @@ export default function Landing() {
         </div>
       </div>
 
-      {/* Pricing */}
+      {/* Pricing 
       <div id="pricing" style={{ padding: '56px 48px', borderBottom: `1px solid ${T.border}` }}>
         <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.12em', color: T.textMuted, textTransform: 'uppercase', marginBottom: 12 }}>Pricing</p>
         <h2 style={{ fontFamily: "'Instrument Serif', serif", fontSize: 40, color: T.heading, letterSpacing: '-0.5px', marginBottom: 32 }}>Simple. No surprises.</h2>
@@ -110,6 +110,7 @@ export default function Landing() {
           ))}
         </div>
       </div>
+      */}
 
       {/* CTA */}
       <div style={{ padding: '72px 48px', textAlign: 'center', borderBottom: `1px solid ${T.border}`, background: T.cardBg }}>
