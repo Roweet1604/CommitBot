@@ -223,24 +223,42 @@
       messages.scrollTop = messages.scrollHeight;
     };
 
+    let isSending = false;
+
     const sendMessage = async () => {
+      if (isSending) return;
       const text = input.value.trim();
       if (!text) return;
+
+      isSending = true;
+      sendBtn.style.opacity = '0.5';
+      sendBtn.style.cursor = 'not-allowed';
+
       addMessage(text, 'user');
       input.value = '';
       showTyping();
+
       try {
-        const res = await fetch(`${apiUrl}/api/chat/${botId}`, {
+        // ✅ FIXED: correct endpoint is /api/chat/${botId}/message
+        const res = await fetch(`${apiUrl}/api/chat/${botId}/message`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: text })
         });
+
+        if (!res.ok) throw new Error(`Server error: ${res.status}`);
+
         const data = await res.json();
         document.getElementById('sitebot-typing')?.remove();
         addMessage(data.reply, 'bot');
       } catch (err) {
         document.getElementById('sitebot-typing')?.remove();
         addMessage('Sorry, something went wrong. Please try again.', 'bot');
+        console.error('CommitBot send error:', err);
+      } finally {
+        isSending = false;
+        sendBtn.style.opacity = '1';
+        sendBtn.style.cursor = 'pointer';
       }
     };
 
