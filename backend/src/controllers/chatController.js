@@ -15,6 +15,9 @@ KNOWLEDGE BASE:
 ${context}`;
 };
 
+// Helper — returns null if model is empty/whitespace so || fallbacks work
+const cleanModel = (model) => (model && model.trim()) ? model.trim() : null;
+
 // Anthropic
 const callAnthropic = async (apiKey, model, userMessage, context) => {
   const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -25,7 +28,7 @@ const callAnthropic = async (apiKey, model, userMessage, context) => {
       'anthropic-version': '2023-06-01'
     },
     body: JSON.stringify({
-      model: model || 'claude-haiku-4-5-20251001',
+      model: cleanModel(model) || 'claude-haiku-4-5-20251001',
       max_tokens: 300,
       system: buildSystemPrompt(context),
       messages: [{ role: 'user', content: userMessage }]
@@ -45,7 +48,7 @@ const callOpenAI = async (apiKey, model, userMessage, context) => {
       'Authorization': `Bearer ${apiKey}`
     },
     body: JSON.stringify({
-      model: model || 'gpt-3.5-turbo',
+      model: cleanModel(model) || 'gpt-3.5-turbo',
       max_tokens: 300,
       messages: [
         { role: 'system', content: buildSystemPrompt(context) },
@@ -60,7 +63,7 @@ const callOpenAI = async (apiKey, model, userMessage, context) => {
 
 // Google Gemini
 const callGoogle = async (apiKey, model, userMessage, context) => {
-  const modelName = model || 'gemini-1.5-flash';
+  const modelName = cleanModel(model) || 'gemini-1.5-flash';
   const response = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`,
     {
@@ -81,7 +84,7 @@ const callGoogle = async (apiKey, model, userMessage, context) => {
   return data.candidates[0].content.parts[0].text;
 };
 
-// Groq (free tier available!)
+// Groq
 const callGroq = async (apiKey, model, userMessage, context) => {
   const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
@@ -90,7 +93,7 @@ const callGroq = async (apiKey, model, userMessage, context) => {
       'Authorization': `Bearer ${apiKey}`
     },
     body: JSON.stringify({
-      model: model || 'llama-3.3-70b-versatile',
+      model: cleanModel(model) || 'llama-3.3-70b-versatile',
       max_tokens: 300,
       messages: [
         { role: 'system', content: buildSystemPrompt(context) },
@@ -112,7 +115,7 @@ const callMistral = async (apiKey, model, userMessage, context) => {
       'Authorization': `Bearer ${apiKey}`
     },
     body: JSON.stringify({
-      model: model || 'mistral-small-latest',
+      model: cleanModel(model) || 'mistral-small-latest',
       max_tokens: 300,
       messages: [
         { role: 'system', content: buildSystemPrompt(context) },
@@ -156,7 +159,7 @@ const chat = async (req, res) => {
         try {
           const apiKey = chatbot.getApiKey();
           const context = buildContext(knowledgeEntries);
-          const model = chatbot.apiModel;
+          const model = chatbot.apiModel; // cleanModel() is called inside each function
           const provider = chatbot.apiKeyProvider;
 
           if (provider === 'anthropic') {
@@ -170,7 +173,6 @@ const chat = async (req, res) => {
           } else if (provider === 'mistral') {
             reply = await callMistral(apiKey, model, message, context);
           } else {
-            // Try OpenAI format as default for unknown providers
             reply = await callOpenAI(apiKey, model, message, context);
           }
         } catch (err) {
