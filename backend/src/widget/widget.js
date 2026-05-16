@@ -200,11 +200,13 @@
     document.body.appendChild(win);
 
     bubble.addEventListener('click', () => win.classList.toggle('open'));
-    document.getElementById('sitebot-close').addEventListener('click', () => win.classList.remove('open'));
 
-    const input = document.getElementById('sitebot-input');
-    const sendBtn = document.getElementById('sitebot-send');
-    const messages = document.getElementById('sitebot-messages');
+    const closeBtn = win.querySelector('#sitebot-close');
+    const input = win.querySelector('#sitebot-input');
+    const sendBtn = win.querySelector('#sitebot-send');
+    const messages = win.querySelector('#sitebot-messages');
+
+    closeBtn.addEventListener('click', () => win.classList.remove('open'));
 
     const addMessage = (text, sender) => {
       const msg = document.createElement('div');
@@ -239,8 +241,7 @@
       showTyping();
 
       try {
-        // ✅ FIXED: correct endpoint is /api/chat/${botId}/message
-        const res = await fetch(`${apiUrl}/api/chat/${botId}/message`, {
+        const res = await fetch(`${apiUrl}/api/chat/${botId}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: text })
