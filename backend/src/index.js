@@ -13,28 +13,32 @@ connectDB();
 
 const app = express();
 
-// CORS
+// ─── CORS ────────────────────────────────────────────────────────────────────
+
+// Strict CORS for your own dashboard/app routes
 const allowedOrigins = [
   'http://localhost:5173',
+  'http://localhost:5174',
   'http://localhost:5500',
   'http://127.0.0.1:5500',
   'http://localhost:3000',
   process.env.FRONTEND_URL,
 ].filter(Boolean);
 
-app.use(cors({
+const strictCors = cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (mobile apps, curl, file://, Postman)
-    if (!origin) {
-      return callback(null, true);
-    }
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
+    // Allow requests with no origin (curl, Postman, mobile apps)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
     callback(new Error('Not allowed by CORS'));
   },
-  credentials: true
-}));
+  credentials: true,
+});
+
+// Open CORS for public widget/chat routes — must be embeddable on ANY website
+const openCors = cors({ origin: '*' });
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 app.use(express.json());
 
@@ -45,18 +49,22 @@ const chatLimiter = rateLimit({
   message: { message: 'Too many messages, please slow down.' }
 });
 
-// Serve widget as static file
-app.use('/widget', express.static('src/widget'));
+// Serve widget as static file — open to all origins
+app.use('/widget', openCors, express.static('src/widget'));
+
+// Public chat routes (widget API) — open CORS applied inside chatRoutes
+// Apply openCors to all /api/chat routes before the router mounts
+app.use('/api/chat', openCors);
 
 // Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/chatbots', chatbotRoutes);
-app.use('/api', knowledgeRoutes);
+app.use('/api/auth', strictCors, authRoutes);
+app.use('/api/chatbots', strictCors, chatbotRoutes);
+app.use('/api', strictCors, knowledgeRoutes);
 
 // Chat routes with rate limiting
 require('./routes/chatRoutes')(app, chatLimiter);
 
-app.get('/api/me', protect, (req, res) => {
+app.get('/api/me', strictCors, protect, (req, res) => {
   res.json({ message: 'You are logged in!', user: req.user });
 });
 
@@ -65,8 +73,8 @@ app.get('/', (req, res) => {
 });
 
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() })
-})
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
