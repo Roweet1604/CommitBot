@@ -28,19 +28,24 @@ export default function EmbedCode() {
 
 export default function ChatbotWidget() {
   useEffect(() => {
-    // Avoid duplicate script injection
-    if (document.querySelector('script[data-bot-id="${id}"]')) return
+    // Avoid duplicate injection
+    if (document.getElementById('commitbot-script')) return
+
+    // Pass config as globals BEFORE script loads (document.currentScript is null for dynamic scripts)
+    window.__commitbot_id__ = '${id}'
+    window.__commitbot_api__ = '${backendUrl}'
 
     const script = document.createElement('script')
+    script.id = 'commitbot-script'
     script.src = '${backendUrl}/widget/widget.js'
-    script.setAttribute('data-bot-id', '${id}')
-    script.setAttribute('data-api-url', '${backendUrl}')
     document.body.appendChild(script)
 
     return () => {
-      // Optional cleanup on unmount
-      const el = document.querySelector('script[data-bot-id="${id}"]')
-      if (el) el.remove()
+      document.getElementById('commitbot-script')?.remove()
+      document.getElementById('sitebot-bubble')?.remove()
+      document.getElementById('sitebot-window')?.remove()
+      delete window.__commitbot_id__
+      delete window.__commitbot_api__
     }
   }, [])
 

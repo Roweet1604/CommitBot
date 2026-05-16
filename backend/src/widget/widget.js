@@ -1,6 +1,7 @@
 (function () {
-  const botId = document.currentScript.getAttribute('data-bot-id');
-  const apiUrl = document.currentScript.getAttribute('data-api-url') || 'http://localhost:5000';
+  const currentScript = document.currentScript;
+  const botId = (currentScript && currentScript.getAttribute('data-bot-id')) || window.__commitbot_id__;
+  const apiUrl = (currentScript && currentScript.getAttribute('data-api-url')) || window.__commitbot_api__ || 'http://localhost:5000';
 
   if (!botId) {
     console.error('CommitBot: data-bot-id is required');
