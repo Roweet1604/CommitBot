@@ -20,6 +20,7 @@ export default function EmbedCode() {
   }, [])
 
   const backendUrl = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace('/api', '')
+  const isLocalUrl = backendUrl.includes('localhost')
 
   const htmlEmbedCode = `<script src="${backendUrl}/widget/widget.js" data-bot-id="${id}" data-api-url="${backendUrl}"></script>`
 
@@ -100,6 +101,19 @@ export default function ChatbotWidget() {
           <h1 style={{ fontFamily: "'Instrument Serif', serif", fontSize: 34, color: T.heading, letterSpacing: '-0.5px', marginBottom: 6 }}>Embed your chatbot</h1>
           <p style={{ fontSize: 14, color: T.textMuted }}>Choose your setup below and paste the code into your project.</p>
         </div>
+
+        {/* Warning if backend URL is still localhost */}
+        {isLocalUrl && (
+          <div style={{ background: '#fef3c7', border: '1px solid #f59e0b', borderRadius: 8, padding: '12px 16px', marginBottom: 16, display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+            <span style={{ fontSize: 16 }}>⚠️</span>
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: '#92400e', marginBottom: 2 }}>Embed code points to localhost</div>
+              <div style={{ fontSize: 12, color: '#92400e', lineHeight: 1.6 }}>
+                Your <code style={{ background: '#fde68a', padding: '1px 4px', borderRadius: 3 }}>VITE_API_URL</code> env variable is not set. The generated embed code uses <strong>localhost:5000</strong> which won't work on deployed sites. Set <code style={{ background: '#fde68a', padding: '1px 4px', borderRadius: 3 }}>VITE_API_URL=https://your-backend.onrender.com/api</code> in your frontend host's environment variables and redeploy.
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Tabs */}
         <div style={{ display: 'flex', gap: 4, marginBottom: 16, background: T.bgSecondary, border: `1px solid ${T.border}`, borderRadius: 8, padding: 4, width: 'fit-content' }}>
