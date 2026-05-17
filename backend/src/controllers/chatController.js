@@ -136,6 +136,9 @@ const chat = async (req, res) => {
     if (!message) {
       return res.status(400).json({ message: 'Message is required' });
     }
+    if (message.length > 500) {
+  return res.status(400).json({ message: 'Message too long. Max 500 characters.' });
+    }
 
     const chatbot = await Chatbot.findById(req.params.botId);
 
