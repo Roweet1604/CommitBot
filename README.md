@@ -230,10 +230,10 @@ The bot's whole knowledge base goes into a system prompt that tells the model to
 
 | Provider  | Default model |
 |-----------|---------------|
-| Anthropic | `claude-haiku-4-5-20251001` |
+| Anthropic | `claude-haiku-5-5` |
 | OpenAI    | `gpt-3.5-turbo` |
-| Google    | `gemini-1.5-flash` |
-| Groq      | `llama-3.3-70b-versatile` |
+| Google    | `gemini-2.5-flash` |
+| Groq      | `openai/gpt-oss-20b` |
 | Mistral   | `mistral-small-latest` |
 
 ---

@@ -28,7 +28,7 @@ const callAnthropic = async (apiKey, model, userMessage, context) => {
       'anthropic-version': '2023-06-01'
     },
     body: JSON.stringify({
-      model: cleanModel(model) || 'claude-haiku-4-5-20251001',
+      model: cleanModel(model) || 'claude-haiku-5-5',
       max_tokens: 300,
       system: buildSystemPrompt(context),
       messages: [{ role: 'user', content: userMessage }]
@@ -63,7 +63,7 @@ const callOpenAI = async (apiKey, model, userMessage, context) => {
 
 // Google Gemini
 const callGoogle = async (apiKey, model, userMessage, context) => {
-  const modelName = cleanModel(model) || 'gemini-1.5-flash';
+  const modelName = cleanModel(model) || 'gemini-2.5-flash';
   const response = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`,
     {
@@ -86,6 +86,7 @@ const callGoogle = async (apiKey, model, userMessage, context) => {
 
 // Groq
 const callGroq = async (apiKey, model, userMessage, context) => {
+  const modelName = cleanModel(model) || 'openai/gpt-oss-20b';
   const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -93,8 +94,10 @@ const callGroq = async (apiKey, model, userMessage, context) => {
       'Authorization': `Bearer ${apiKey}`
     },
     body: JSON.stringify({
-      model: cleanModel(model) || 'llama-3.3-70b-versatile',
+      model: modelName,
       max_tokens: 300,
+      // gpt-oss is a reasoning model — without this it spends the whole token budget thinking and returns ""
+      ...(modelName.startsWith('openai/gpt-oss') && { reasoning_effort: 'low' }),
       messages: [
         { role: 'system', content: buildSystemPrompt(context) },
         { role: 'user', content: userMessage }
@@ -178,6 +181,7 @@ const chat = async (req, res) => {
           } else {
             reply = await callOpenAI(apiKey, model, message, context);
           }
+          if (!reply || !reply.trim()) throw new Error(`Empty reply from ${provider} model`);
         } catch (err) {
           console.error('AI API error:', err.message);
           const match = findBestMatch(message, knowledgeEntries);

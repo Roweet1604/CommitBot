@@ -172,7 +172,7 @@ export default function BotBuilder() {
                 </select>
                 <label style={labelStyle}>Model <span style={{ color: T.textMuted, fontWeight: 400 }}>(optional)</span></label>
                 <input style={inputStyle} type="text" value={apiModel} onChange={e => setApiModel(e.target.value)}
-                  placeholder={apiProvider === 'groq' ? 'e.g. llama-3.3-70b-versatile' : 'model name'} />
+                  placeholder={apiProvider === 'groq' ? 'e.g. openai/gpt-oss-20b' : 'model name'} />
                 <label style={labelStyle}>API key</label>
                 <input style={inputStyle} type="password" value={apiKey} onChange={e => setApiKey(e.target.value)} placeholder="Paste your API key here" />
                 <button onClick={saveApiKey} disabled={savingKey || !apiKey.trim()}
