@@ -28,7 +28,7 @@ const strictCors = cors({
   origin: function (origin, callback) {
     if (!origin) return callback(null, true);
     if (allowedOrigins.includes(origin)) return callback(null, true);
-    callback(new Error('Not allowed by CORS'));
+    callback(null, false); // no CORS headers → browser blocks it, without a 500 + stack trace
   },
   credentials: true,
 });

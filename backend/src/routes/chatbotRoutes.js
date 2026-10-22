@@ -10,6 +10,9 @@ const {
   saveApiKey,
   deleteApiKey
 } = require('../controllers/chatbotController');
+const { validateId } = require('../middleware/validateId');
+
+router.param('id', validateId);
 
 router.post('/', protect, createChatbot);
 router.get('/', protect, getChatbots);

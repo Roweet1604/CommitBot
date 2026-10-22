@@ -81,7 +81,16 @@ const chatbotSchema = new mongoose.Schema({
   totalConversations: { type: Number, default: 0 },
   totalMessages:      { type: Number, default: 0 }
 
-}, { timestamps: true });
+}, {
+  timestamps: true,
+  // Never send the encrypted key to clients
+  toJSON: {
+    transform: (doc, ret) => {
+      delete ret.encryptedApiKey;
+      return ret;
+    }
+  }
+});
 
 chatbotSchema.methods.setApiKey = function(plainKey, provider) {
   this.encryptedApiKey = encrypt(plainKey);

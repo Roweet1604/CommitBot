@@ -3,7 +3,11 @@ const Knowledge = require('../models/knowledge');
 
 const createChatbot = async (req, res) => {
   try {
-    const { name, greetingMessage, responseMode, appearance } = req.body;
+    const { name, greetingMessage, responseMode, appearance } = req.body || {};
+
+    if (!name || !name.trim()) {
+      return res.status(400).json({ message: 'Bot name is required' });
+    }
 
     const chatbot = await Chatbot.create({
       user: req.user._id,

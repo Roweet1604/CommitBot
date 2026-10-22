@@ -15,7 +15,7 @@ export default function KnowledgeBase() {
   const [form, setForm] = useState({ title: '', content: '' })
   const [saving, setSaving] = useState(false)
 
-  useEffect(() => { fetchData() }, [])
+  useEffect(() => { fetchData() }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchData = async () => {
     try {
@@ -25,7 +25,7 @@ export default function KnowledgeBase() {
       ])
       setBotName(botRes.data.name)
       setEntries(knowledgeRes.data)
-    } catch (err) {
+    } catch {
       toast.error('Failed to load')
     } finally {
       setLoading(false)
@@ -47,7 +47,7 @@ export default function KnowledgeBase() {
       setShowForm(false)
       setEditing(null)
       fetchData()
-    } catch (err) {
+    } catch {
       toast.error('Failed to save')
     } finally {
       setSaving(false)
@@ -60,7 +60,7 @@ export default function KnowledgeBase() {
       await api.delete(`/knowledge/${knowledgeId}`)
       toast.success('Deleted')
       fetchData()
-    } catch (err) {
+    } catch {
       toast.error('Failed to delete')
     }
   }

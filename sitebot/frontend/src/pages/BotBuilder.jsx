@@ -16,13 +16,13 @@ export default function BotBuilder() {
   const [apiModel, setApiModel] = useState('')
   const [savingKey, setSavingKey] = useState(false)
 
-  useEffect(() => { fetchBot() }, [])
+  useEffect(() => { fetchBot() }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchBot = async () => {
     try {
       const res = await api.get(`/chatbots/${id}`)
       setBot(res.data)
-    } catch (err) {
+    } catch {
       toast.error('Bot not found')
       navigate('/dashboard')
     } finally {
@@ -47,7 +47,7 @@ export default function BotBuilder() {
         }
       })
       toast.success('Bot saved!')
-    } catch (err) {
+    } catch {
       toast.error('Failed to save')
     } finally {
       setSaving(false)
@@ -63,7 +63,7 @@ export default function BotBuilder() {
       setApiKey('')
       setApiModel('')
       fetchBot()
-    } catch (err) {
+    } catch {
       toast.error('Failed to save API key')
     } finally {
       setSavingKey(false)
@@ -76,7 +76,7 @@ export default function BotBuilder() {
       await api.delete(`/chatbots/${id}/apikey`)
       toast.success('API key removed')
       fetchBot()
-    } catch (err) {
+    } catch {
       toast.error('Failed to remove key')
     }
   }
@@ -103,7 +103,6 @@ export default function BotBuilder() {
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           {/* Theme toggle */}
-          <button onClick={() => { const ctx = require('../context/ThemeContext'); }} style={{ display: 'none' }} />
           <ThemeToggle />
           <Link to={`/bot/${id}/knowledge`} style={{ padding: '8px 16px', borderRadius: 7, border: `1px solid ${T.border}`, background: 'transparent', color: T.textSecondary, fontSize: 13, textDecoration: 'none' }}>Knowledge base</Link>
           <Link to={`/bot/${id}/embed`} style={{ padding: '8px 16px', borderRadius: 7, border: `1px solid ${T.border}`, background: 'transparent', color: T.textSecondary, fontSize: 13, textDecoration: 'none' }}>Embed code</Link>

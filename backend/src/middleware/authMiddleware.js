@@ -18,6 +18,9 @@ const protect = async (req, res, next) => {
 
     // Attach the user to the request object
     req.user = await User.findById(decoded.id).select('-password');
+    if (!req.user) {
+      return res.status(401).json({ message: 'Not authorized, user not found' });
+    }
 
     next(); // Move on to the actual route
   } catch (error) {

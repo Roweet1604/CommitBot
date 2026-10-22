@@ -20,7 +20,7 @@ export default function Dashboard() {
     try {
       const res = await api.get('/chatbots')
       setBots(res.data)
-    } catch (err) {
+    } catch {
       toast.error('Failed to load bots')
     } finally {
       setLoading(false)
@@ -40,7 +40,7 @@ export default function Dashboard() {
       setShowModal(false)
       setNewBotName('')
       navigate(`/bot/${res.data._id}`)
-    } catch (err) {
+    } catch {
       toast.error('Failed to create bot')
     } finally {
       setCreating(false)
@@ -53,7 +53,7 @@ export default function Dashboard() {
       await api.delete(`/chatbots/${botId}`)
       toast.success('Bot deleted')
       fetchBots()
-    } catch (err) {
+    } catch {
       toast.error('Failed to delete')
     }
   }

@@ -7,6 +7,10 @@ const {
   updateKnowledge,
   deleteKnowledge
 } = require('../controllers/knowledgeController');
+const { validateId } = require('../middleware/validateId');
+
+router.param('id', validateId);
+router.param('knowledgeId', validateId);
 
 router.post('/chatbots/:id/knowledge', protect, addKnowledge);
 router.get('/chatbots/:id/knowledge', protect, getKnowledge);

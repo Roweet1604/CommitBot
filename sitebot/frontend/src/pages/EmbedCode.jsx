@@ -17,7 +17,7 @@ export default function EmbedCode() {
       .then(res => setBot(res.data))
       .catch(() => toast.error('Failed to load bot'))
       .finally(() => setLoading(false))
-  }, [])
+  }, [id])
 
   const backendUrl = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace('/api', '')
   const isLocalUrl = backendUrl.includes('localhost')
